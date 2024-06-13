@@ -8,7 +8,8 @@ import (
 )
 
 const (
-	UserInfoFile = "secrets/user-info.json"
+	UserInfoFile   = "secrets/user-info.json"
+	SecretsWebroot = "webroot/"
 	// poll cert/key combo every hour
 	PollHrs          = 1
 	CertFileEnv      = "TLS_CERT_PATH"
@@ -34,6 +35,7 @@ type Vector_UserInfo struct {
 
 type Vector_KGInfo struct {
 	Enabled   bool   `json:"enabled"`
+	Prompt    string `json:"prompt"`
 	Service   string `json:"service"`
 	APIKey    string `json:"apikey"`
 	ClientKey string `json:"clientkey"`

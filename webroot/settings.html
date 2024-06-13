@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Bot Settings</title>
+    </head>
+    <body>
+        <label for="locationInput">Location (for weather command)</label>
+        <input id="locationInput" type="text">
+        <br />
+        <label for="kgServiceInput">Knowledge Graph Service</label>
+        <select name="kgServiceInput" id="kgServiceInput" onchange="checkKG()">
+        <option value="" selected>None</option>
+        <option value="openai">OpenAI</option>
+        <option value="houndify">Houndify</option>
+        <option value="together">Together</option></select>
+        <br />
+        <span id="kgPrompt" style="display: none">
+            <label for="kgPromptInput">LLM Prompt (leave blank for default)</label>
+            <input id="kgPromptInput" type="text">
+        </span>
+        <br />
+    </body>
+</html>

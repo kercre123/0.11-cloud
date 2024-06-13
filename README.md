@@ -13,10 +13,10 @@ I will probably implement a public web interface. Anyone can register their bot'
 ## Env vars
 
 ```
-	CertFileEnv      = "TLS_CERT_PATH"
-	KeyFileEnv       = "TLS_KEY_PATH"
-	WeatherAPIKeyEnv = "WEATHER_API_KEY"
-	VoskModelPathEnv = "VOSK_MODEL_PATH"
-	ChipperPortEnv   = "CHIPPER_PORT"
-	WebPortEnv       = "WEB_PORT"
+CertFileEnv      = "TLS_CERT_PATH"
+KeyFileEnv       = "TLS_KEY_PATH"
+WeatherAPIKeyEnv = "WEATHER_API_KEY"
+VoskModelPathEnv = "VOSK_MODEL_PATH"
+ChipperPortEnv   = "CHIPPER_PORT"
+WebPortEnv       = "WEB_PORT"
 ```
