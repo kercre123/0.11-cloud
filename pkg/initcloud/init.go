@@ -46,7 +46,7 @@ func InitCloud() {
 	web.AddSecretsAPI()
 	web.AddSecretsWebroot()
 
-	go http.ListenAndServeTLS(":"+os.Getenv("WEB_PORT"), os.Getenv(vars.CertFileEnv), os.Getenv(vars.KeyFileEnv), nil)
+	go http.ListenAndServeTLS(":"+os.Getenv(vars.WebPortEnv), os.Getenv(vars.CertFileEnv), os.Getenv(vars.KeyFileEnv), nil)
 
 	fmt.Println("serving chipper at port " + chipperPort)
 	grpcServe(tlsListener, serv)

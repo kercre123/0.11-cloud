@@ -7,8 +7,9 @@ type ESNValidRequest struct {
 }
 
 type ESNValidResponse struct {
-	IsValid bool `json:"esn_isvalid"`
-	IsNew   bool `json:"esn_isnew"`
+	IsValid   bool `json:"esn_isvalid"`
+	IsNew     bool `json:"esn_isnew"`
+	MatchesIP bool `json:"matches_ip"`
 }
 
 /*

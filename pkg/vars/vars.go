@@ -25,10 +25,15 @@ var TLSCert []byte
 var TLSKey []byte
 
 var UserInfo []Vector_UserInfo
-var IPWhitelist []string
+var IPWhitelists []IPWhitelist
 
 var UserDataMutex sync.Mutex
 var IPWhitelistMutex sync.Mutex
+
+type IPWhitelist struct {
+	ESN string `json:"esn"`
+	IP  string `json:"ip"`
+}
 
 type Vector_UserInfo struct {
 	ESN      string        `json:"esn"`
@@ -63,7 +68,7 @@ func Init() {
 		fmt.Println("creating IP whitelist file")
 		os.Create(UserInfoFile)
 	}
-	err = json.Unmarshal(ipW, &IPWhitelist)
+	err = json.Unmarshal(ipW, &IPWhitelists)
 	if err != nil {
 		fmt.Println("error unmarshaling IP whitelist: " + err.Error())
 	}
@@ -129,7 +134,7 @@ func SaveUserInfo() error {
 }
 
 func SaveIPWhitelist() error {
-	jsonBytes, err := json.Marshal(IPWhitelist)
+	jsonBytes, err := json.Marshal(IPWhitelists)
 	if err != nil {
 		fmt.Println("error saving user info " + err.Error())
 		return err
@@ -138,26 +143,36 @@ func SaveIPWhitelist() error {
 	return nil
 }
 
-func AddToIPWhitelist(ipAddr string) {
+func AddToIPWhitelist(ipAddr, esn string) {
 	UserDataMutex.Lock()
 	defer UserDataMutex.Unlock()
-	for _, ip := range IPWhitelist {
-		if ip == ipAddr {
+	for i, wl := range IPWhitelists {
+		if wl.ESN == esn {
+			if wl.IP != ipAddr {
+				IPWhitelists[i].IP = ipAddr
+				SaveIPWhitelist()
+			}
 			return
 		}
 	}
-	IPWhitelist = append(IPWhitelist, ipAddr)
+	var newWl IPWhitelist
+	newWl.ESN = esn
+	newWl.IP = ipAddr
+	IPWhitelists = append(IPWhitelists, newWl)
 	fmt.Println("adding " + ipAddr + " to IP whitelist")
 	SaveIPWhitelist()
 }
 
-func IsInWhitelist(ipAddr string) bool {
+func IsInWhitelist(ipAddr, esn string) (is, ESNmatches bool) {
 	UserDataMutex.Lock()
 	defer UserDataMutex.Unlock()
-	for _, ip := range IPWhitelist {
-		if ip == ipAddr {
-			return true
+	for _, wl := range IPWhitelists {
+		if wl.IP == ipAddr {
+			if wl.ESN == esn {
+				return true, true
+			}
+			return true, false
 		}
 	}
-	return false
+	return false, false
 }

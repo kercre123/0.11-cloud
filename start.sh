@@ -12,7 +12,9 @@ fi
 
 source source.sh
 
-if [[ ! -f main ]]; then
+rm -rf 011-cloud
+
+if [[ ! -f 011-cloud ]]; then
 	echo "building the program... (if there are errors, make sure you have wire-pod installed. it will put vosk in the right place)"
 	CGO_LDFLAGS=-L/root/.vosk/libvosk CGO_CFLAGS=-I/root/.vosk/libvosk go build -o 011-cloud main.go
 fi

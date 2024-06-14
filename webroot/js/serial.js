@@ -4,8 +4,9 @@ type ESNValidRequest struct {
 }
 
 type ESNValidResponse struct {
-	IsValid bool `json:"esn_isvalid"`
-	IsNew   bool `json:"esn_isnew"`
+	IsValid   bool `json:"esn_isvalid"`
+	IsNew     bool `json:"esn_isnew"`
+	MatchesIP bool `json:"matches_ip"`
 }
 */
 
@@ -24,8 +25,13 @@ function sendSerialInput() {
             if (!resp["esn_isvalid"]) {
                 alert("This ESN is not valid.")
                 return
+            } else if (!resp["matches_ip"]) {
+                alert("This ESN does not match your IP address. It is possible your IP has changed. Try a voice command then try this again.")
+                return
+            } else {
+                goToSettingsPage(esnInput)
             }
-            
+
         }
     )
 }

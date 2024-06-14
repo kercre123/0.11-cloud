@@ -160,19 +160,23 @@ func getRec(withGrm bool) (*vosk.VoskRecognizer, int) {
 	}
 }
 
-func STT(req sr.SpeechRequest) (string, error) {
+func STT(req sr.SpeechRequest, doSkip bool) (string, error) {
 	fmt.Println("(Bot " + req.Device + ", Vosk) Processing...")
 	var withGrm bool
 	rec, recind := getRec(false)
 	rec.SetWords(1)
-	//rec.AcceptWaveform(req.FirstReq)
-	req.DetectEndOfSpeech()
 	var toldUser bool
+	if !doSkip {
+		req.ChunkSkips = 4
+		toldUser = true
+		rec.AcceptWaveform(req.FirstReq)
+	}
+	req.DetectEndOfSpeech()
 	for {
 		chunk, err := req.GetNextStreamChunk()
-		if req.ChunkSkips == 6 {
+		if req.ChunkSkips == 5 {
 			if !toldUser {
-				fmt.Println("past 6 skipped audio chunks")
+				fmt.Println("past 4 skipped audio chunks")
 				toldUser = true
 			}
 			if err != nil {

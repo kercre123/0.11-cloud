@@ -9,6 +9,8 @@ require (
 	github.com/kercre123/vosk-api/go v1.0.2
 	github.com/kercre123/wire-pod/chipper v1.3.9
 	github.com/maxhawkins/go-webrtcvad v0.0.0-20210121163624-be60036f3083
+	github.com/sashabaranov/go-openai v1.24.0
+	github.com/soundhound/houndify-sdk-go v0.3.5
 	google.golang.org/grpc v1.64.0
 )
 
@@ -28,6 +30,7 @@ require (
 	github.com/mitchellh/mapstructure v1.4.3 // indirect
 	github.com/ncruces/zenity v0.10.10 // indirect
 	github.com/pelletier/go-toml v1.8.0 // indirect
+	github.com/pkg/errors v0.9.1 // indirect
 	github.com/randall77/makefat v0.0.0-20210315173500-7ddd0e42c844 // indirect
 	github.com/sirupsen/logrus v1.7.0 // indirect
 	github.com/spf13/afero v1.2.2 // indirect

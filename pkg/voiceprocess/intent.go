@@ -15,9 +15,9 @@ import (
 func (s *Server) ProcessIntent(req *vtt.IntentRequest) (*vtt.IntentResponse, error) {
 	p, _ := peer.FromContext(req.Stream.Context())
 	ip, _, _ := net.SplitHostPort(p.Addr.String())
-	vars.AddToIPWhitelist(ip)
+	vars.AddToIPWhitelist(ip, req.Device)
 	sReq := speechrequest.ReqToSpeechRequest(req)
-	transcribedText, err := stt.STT(sReq)
+	transcribedText, err := stt.STT(sReq, true)
 	if err != nil {
 		ttr.IntentPass(req, "intent_system_noaudio", "error: "+err.Error(), map[string]string{}, false)
 		return nil, err

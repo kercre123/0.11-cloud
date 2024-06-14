@@ -106,7 +106,7 @@ func (req *SpeechRequest) DetectEndOfSpeech() (bool, bool) {
 	// changes InactiveFrames and ActiveFrames in req
 	inactiveNumMax := 23
 	vad := req.VADInst
-	vad.SetMode(3)
+	vad.SetMode(2)
 	for _, chunk := range SplitVAD(req.LastAudioChunk) {
 		active, err := vad.Process(16000, chunk)
 		if err != nil {
@@ -120,7 +120,7 @@ func (req *SpeechRequest) DetectEndOfSpeech() (bool, bool) {
 		} else {
 			req.InactiveFrames = req.InactiveFrames + 1
 		}
-		if req.InactiveFrames >= inactiveNumMax && req.ActiveFrames > 18 {
+		if req.InactiveFrames >= inactiveNumMax && req.ActiveFrames > 30 {
 			fmt.Println("(Bot " + req.Device + ") End of speech detected.")
 			return true, true
 		}

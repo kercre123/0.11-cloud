@@ -4,20 +4,34 @@
         <title>Bot Settings</title>
     </head>
     <body>
+        <h1>Bot Settings</h1>
+        <hr>
         <label for="locationInput">Location (for weather command)</label>
+        <br />
         <input id="locationInput" type="text">
         <br />
         <label for="kgServiceInput">Knowledge Graph Service</label>
+        <br />
         <select name="kgServiceInput" id="kgServiceInput" onchange="checkKG()">
         <option value="" selected>None</option>
         <option value="openai">OpenAI</option>
         <option value="houndify">Houndify</option>
         <option value="together">Together</option></select>
         <br />
+        <span id="kgKey" style="display: none">
+            <label for="kgKeyInput">KG API Key/Client ID</label>
+            <input id="kgKeyInput" type="text">
+        </span>
+        <span id="kgClientKey" style="display: none">
+            <label for="kgClientKeyInput">Houndify Client Key</label>
+            <input id="kgClientKeyInput" type="text">
+        </span>
         <span id="kgPrompt" style="display: none">
             <label for="kgPromptInput">LLM Prompt (leave blank for default)</label>
             <input id="kgPromptInput" type="text">
         </span>
         <br />
+        <button onclick="setSettings()">Submit</button>
     </body>
+    <script src="./js/settings.js"></script>
 </html>
