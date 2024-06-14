@@ -1,16 +1,19 @@
 <!DOCTYPE html>
 <html>
     <head>
+        <link rel="stylesheet" href="/css/styles.css">
         <title>0.11 Cloud</title>
     </head>
     <body>
-        <h1>0.11 Cloud</h1>
+        <h1>0.11-Cloud Bot Configuration</h1>
         <hr>
-        <label for="serialInput">Enter your bot's serial number here (ex. 00e20145), then press "Submit".</label>
-        <br />
-        <input id="serialInput" name="serialInput" type="text">
-        <br />
-        <button onclick="sendSerialInput()">Submit</button>
+        <div class="serialForm">
+            <label for="serialInput">Enter your bot's serial number then press "Submit".</label>
+            <input class="serialInput" id="serialInput" name="serialInput" autocomplete="off" spellcheck="false" inputmode="text" placeholder="ESN (ex. 00e20145)" type="text">
+            <hr class="small-hr">
+            <button id="doSerialInput" onclick="sendSerialInput()">Submit</button>
+            <hr>
+        </div>
     </body>
     <script src="./js/serial.js"></script>
 </html>

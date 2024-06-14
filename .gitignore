@@ -4,3 +4,7 @@
 /model
 /main
 /011-cloud
+/vosk
+/deploy
+/opusBuild
+/*.tar.gz

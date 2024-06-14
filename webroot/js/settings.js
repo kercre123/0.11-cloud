@@ -2,30 +2,22 @@ var urlParams = new URLSearchParams(window.location.search);
 var esn = urlParams.get("serial");
 getSettings();
 
-/*
-        <label for="locationInput">Location (for weather command)</label>
-        <input id="locationInput" type="text">
-        <br />
-        <label for="kgServiceInput">Knowledge Graph Service</label>
-        <select name="kgServiceInput" id="kgServiceInput" onchange="checkKG()">
-        <option value="" selected>None</option>
-        <option value="openai">OpenAI</option>
-        <option value="houndify">Houndify</option>
-        <option value="together">Together</option></select>
-        <br />
-        <span id="kgKey" style="display: none">
-            <label for="kgKeyInput">KG API Key</label>
-            <input id="kgKeyInput" type="text">
-        </span>
-        <span id="kgClientKey" style="display: none">
-            <label for="kgClientKeyInput">Houndify Client Key</label>
-            <input id="kgClientKeyInput" type="text">
-        </span>
-        <span id="kgPrompt" style="display: none">
-            <label for="kgPromptInput">LLM Prompt (leave blank for default)</label>
-            <input id="kgPromptInput" type="text">
-        </span>
-*/
+var HoundClientID = ""
+var HoundClientKey = ""
+var OpenAIKey = ""
+var TogetherKey = ""
+var AiPrompt = ""
+
+var inputs = ["locationInput", "kgKeyInput", "kgClientKey", "kgPromptInput"]
+
+for (var element of inputs) {
+    document.getElementById(element).addEventListener("keypress", function(event) {
+        if (event.key === "Enter") {
+            event.preventDefault();
+            document.getElementById("doSetSettings").click();
+        }
+    });
+}
 
 function hideE(element) {
     document.getElementById(element).style.display = "none"
@@ -39,20 +31,33 @@ function setE(element, set) {
     document.getElementById(element).value = set
 }
 
+function setIHTML(element, set) {
+    document.getElementById(element).innerHTML = set
+}
+
 function checkKG() {
     kgService = document.getElementById("kgServiceInput").value
     switch(kgService) {
         case "openai":
+            setIHTML("kgKeyLabel", "OpenAI API Key")
+            setE("kgKeyInput", OpenAIKey)
+            setE("kgPrompt", AiPrompt)
             showE("kgKey")
             hideE("kgClientKey")
             showE("kgPrompt")
             break
         case "together":
+            setIHTML("kgKeyLabel", "Together API Key")
+            setE("kgKeyInput", TogetherKey)
+            setE("kgPrompt", AiPrompt)
             showE("kgKey")
             hideE("kgClientKey")
             showE("kgPrompt")
             break
         case "houndify":
+            setIHTML("kgKeyLabel", "Houndify Client ID")
+            setE("kgKeyInput", HoundClientID)
+            setE("kgClientKeyInput", HoundClientKey)
             showE("kgKey")
             showE("kgClientKey")
             hideE("kgPrompt")
@@ -65,8 +70,26 @@ function checkKG() {
 }
 
 function setValues(location, kgEnabled, kgService, kgKey, kgClientKey, kgPrompt) {
+    /*
+    var HoundClientID
+    var HoundClientKey
+    var OpenAIKey
+    var TogetherKey
+    var AiPrompt
+    */
     setE("locationInput", location)
     if (kgEnabled) {
+        if (kgService == "houndify") {
+            HoundClientID = kgKey
+            HoundClientKey = kgClientKey
+        } else {
+            if (kgService == "openai") {
+                OpenAIKey = kgKey
+            } else if (kgService == "together") {
+                TogetherKey = kgKey
+            }
+            AiPrompt = kgPrompt
+        }
         setE("kgServiceInput", kgService)
         setE("kgKeyInput", kgKey)
         setE("kgClientKeyInput", kgClientKey)

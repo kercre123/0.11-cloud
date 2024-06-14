@@ -1,16 +1,22 @@
 # 0.11-cloud
 
-This is almost-fully-working cloud software specifically designed for 0.11.19. All support for newer bots is removed.
+This is fully functional cloud software for Anki Vector robots running 0.11.19 firmware (and other firmware from that era).
 
-This is designed for 0.11.19, but older versions should work too.
+This also serves as experimental grounds. If I learn how to better implement something, I will implement it that way here.
 
-This is essentially just a bunch of stuff copied from wire-pod. This is more designed to be run as server software rather than software meant to be run on the same network as Vector. So, a bunch of stuff is taken out.
+It is meant to be deployed on a server. To make a server deployment tar, run `sudo ./deploy-create.sh`
 
-I have gotten it working with 0.11.19 on my public server. I'll release firmware soon which uses this.
+I will be running this on a server soon.
 
-I will probably implement a public web interface. Anyone can register their bot's ESN with a password (once it's implemented). Weather API will be handled by me, but you will be able to enter your knowledge graph credentials.
+## Webroot
+
+The web interface lets you set the bot's location and lets you set the API credentials for Houndify, OpenAI, or Together.
+
+The web interface only lets you use it once you have said a voice command to the bot. It links your network's public IP with your bot's ESN. Then, you are allowed to go to it and enter your bot's ESN to modify settings.
 
 ## Env vars
+
+These must be set for this to run (in source.sh).
 
 ```
 CertFileEnv      = "TLS_CERT_PATH"

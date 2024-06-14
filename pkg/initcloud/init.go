@@ -1,12 +1,14 @@
 package initcloud
 
 import (
+	"context"
 	"crypto/tls"
 	"fmt"
 	"log"
 	"net"
 	"net/http"
 	"os"
+	"time"
 
 	chipperpb "github.com/digital-dream-labs/api/go/chipperpb"
 	grpcserver "github.com/digital-dream-labs/hugh/grpc/server"
@@ -16,6 +18,27 @@ import (
 	wp "github.com/kercre123/0.11-cloud/pkg/voiceprocess"
 	"github.com/kercre123/0.11-cloud/pkg/web"
 )
+
+var Listener net.Listener
+var GRPCServer *grpcserver.Server
+
+func MkHTTPS(port string) *http.Server {
+	srv := &http.Server{
+		Addr:    fmt.Sprintf(":%d", port),
+		Handler: http.DefaultServeMux,
+		TLSConfig: &tls.Config{
+			GetCertificate: func(*tls.ClientHelloInfo) (*tls.Certificate, error) {
+				cert, err := tls.X509KeyPair(vars.TLSCert, vars.TLSKey)
+				if err != nil {
+					return nil, err
+				}
+				return &cert, nil
+			},
+		},
+	}
+
+	return srv
+}
 
 func InitCloud() {
 	chipperPort := os.Getenv(vars.ChipperPortEnv)
@@ -28,12 +51,13 @@ func InitCloud() {
 	if err != nil {
 		fmt.Println("error initing STT: " + err.Error())
 	}
+
 	cert, err := tls.X509KeyPair(vars.TLSCert, vars.TLSKey)
 	if err != nil {
 		fmt.Println("error loading certs: " + err.Error())
 		os.Exit(1)
 	}
-	tlsListener, err := tls.Listen("tcp", ":"+chipperPort, &tls.Config{
+	Listener, err = tls.Listen("tcp", ":"+chipperPort, &tls.Config{
 		Certificates: []tls.Certificate{cert},
 		CipherSuites: nil,
 	})
@@ -43,17 +67,43 @@ func InitCloud() {
 		os.Exit(1)
 	}
 
+	httpServ := MkHTTPS(os.Getenv(vars.WebPortEnv))
+
 	web.AddSecretsAPI()
 	web.AddSecretsWebroot()
-
-	go http.ListenAndServeTLS(":"+os.Getenv(vars.WebPortEnv), os.Getenv(vars.CertFileEnv), os.Getenv(vars.KeyFileEnv), nil)
+	go httpServ.ListenAndServeTLS("", "")
 
 	fmt.Println("serving chipper at port " + chipperPort)
-	grpcServe(tlsListener, serv)
+	grpcServe(Listener, serv)
+	for {
+		time.Sleep(time.Hour * vars.PollHrs)
+		certBytes, err := os.ReadFile(os.Getenv(vars.CertFileEnv))
+		if err != nil {
+			fmt.Println("error polling cert")
+			os.Exit(1)
+		}
+		if string(certBytes) != string(vars.TLSCert) {
+			fmt.Println("cert is different, restarting servers")
+			vars.TLSCert = certBytes
+			keyBytes, _ := os.ReadFile(os.Getenv(vars.KeyFileEnv))
+			vars.TLSKey = keyBytes
+			GRPCServer.Stop()
+			cert, _ = tls.X509KeyPair(vars.TLSCert, vars.TLSKey)
+			Listener, err = tls.Listen("tcp", ":"+chipperPort, &tls.Config{
+				Certificates: []tls.Certificate{cert},
+				CipherSuites: nil,
+			})
+			httpServ.Shutdown(context.TODO())
+			httpServ = MkHTTPS(os.Getenv(vars.WebPortEnv))
+			go httpServ.ListenAndServeTLS("", "")
+			go grpcServe(Listener, serv)
+		}
+	}
 }
 
 func grpcServe(l net.Listener, p *wp.Server) error {
-	srv, err := grpcserver.New(
+	var err error
+	GRPCServer, err = grpcserver.New(
 		grpcserver.WithViper(),
 		grpcserver.WithReflectionService(),
 		grpcserver.WithInsecureSkipVerify(),
@@ -67,7 +117,7 @@ func grpcServe(l net.Listener, p *wp.Server) error {
 		chipperserver.WithKnowledgeGraphProcessor(p),
 	)
 
-	chipperpb.RegisterChipperGrpcServer(srv.Transport(), s)
+	chipperpb.RegisterChipperGrpcServer(GRPCServer.Transport(), s)
 
-	return srv.Transport().Serve(l)
+	return GRPCServer.Transport().Serve(l)
 }

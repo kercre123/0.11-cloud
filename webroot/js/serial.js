@@ -10,6 +10,13 @@ type ESNValidResponse struct {
 }
 */
 
+document.getElementById("serialInput").addEventListener("keypress", function(event) {
+    if (event.key === "Enter") {
+      event.preventDefault();
+      document.getElementById("doSerialInput").click();
+    }
+});
+
 function sendSerialInput() {
     var esnInput = document.getElementById("serialInput").value
     fetch("/api/is_esn_valid", {
@@ -25,13 +32,14 @@ function sendSerialInput() {
             if (!resp["esn_isvalid"]) {
                 alert("This ESN is not valid.")
                 return
-            } else if (!resp["matches_ip"]) {
+            } else if (resp["esn_isnew"]) {
+                alert("This ESN was not found in the database. You may have entered it incorrectly or your bot's firmware doesn't add the ESN to the voice request.")
+            }   else if (!resp["matches_ip"]) {
                 alert("This ESN does not match your IP address. It is possible your IP has changed. Try a voice command then try this again.")
                 return
             } else {
                 goToSettingsPage(esnInput)
             }
-
         }
     )
 }
