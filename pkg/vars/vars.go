@@ -8,8 +8,9 @@ import (
 )
 
 const (
-	UserInfoFile   = "secrets/user-info.json"
-	SecretsWebroot = "webroot/"
+	UserInfoFile    = "secrets/user-info.json"
+	IPWhitelistFile = "secrets/ip-whitelist.json"
+	SecretsWebroot  = "webroot/"
 	// poll cert/key combo every hour
 	PollHrs          = 1
 	CertFileEnv      = "TLS_CERT_PATH"
@@ -24,8 +25,10 @@ var TLSCert []byte
 var TLSKey []byte
 
 var UserInfo []Vector_UserInfo
+var IPWhitelist []string
 
 var UserDataMutex sync.Mutex
+var IPWhitelistMutex sync.Mutex
 
 type Vector_UserInfo struct {
 	ESN      string        `json:"esn"`
@@ -53,6 +56,16 @@ func Init() {
 	err = json.Unmarshal(uInfo, &UserInfo)
 	if err != nil {
 		fmt.Println("error unmarshaling user info: " + err.Error())
+	}
+
+	ipW, err := os.ReadFile(IPWhitelistFile)
+	if err != nil {
+		fmt.Println("creating IP whitelist file")
+		os.Create(UserInfoFile)
+	}
+	err = json.Unmarshal(ipW, &IPWhitelist)
+	if err != nil {
+		fmt.Println("error unmarshaling IP whitelist: " + err.Error())
 	}
 
 	// open the cert and key
@@ -113,4 +126,38 @@ func SaveUserInfo() error {
 	}
 	os.WriteFile(UserInfoFile, jsonBytes, 0777)
 	return nil
+}
+
+func SaveIPWhitelist() error {
+	jsonBytes, err := json.Marshal(IPWhitelist)
+	if err != nil {
+		fmt.Println("error saving user info " + err.Error())
+		return err
+	}
+	os.WriteFile(IPWhitelistFile, jsonBytes, 0777)
+	return nil
+}
+
+func AddToIPWhitelist(ipAddr string) {
+	UserDataMutex.Lock()
+	defer UserDataMutex.Unlock()
+	for _, ip := range IPWhitelist {
+		if ip == ipAddr {
+			return
+		}
+	}
+	IPWhitelist = append(IPWhitelist, ipAddr)
+	fmt.Println("adding " + ipAddr + " to IP whitelist")
+	SaveIPWhitelist()
+}
+
+func IsInWhitelist(ipAddr string) bool {
+	UserDataMutex.Lock()
+	defer UserDataMutex.Unlock()
+	for _, ip := range IPWhitelist {
+		if ip == ipAddr {
+			return true
+		}
+	}
+	return false
 }

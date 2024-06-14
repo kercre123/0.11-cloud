@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"log"
 	"net"
+	"net/http"
 	"os"
 
 	chipperpb "github.com/digital-dream-labs/api/go/chipperpb"
@@ -13,6 +14,7 @@ import (
 	"github.com/kercre123/0.11-cloud/pkg/stt"
 	"github.com/kercre123/0.11-cloud/pkg/vars"
 	wp "github.com/kercre123/0.11-cloud/pkg/voiceprocess"
+	"github.com/kercre123/0.11-cloud/pkg/web"
 )
 
 func InitCloud() {
@@ -40,6 +42,12 @@ func InitCloud() {
 		fmt.Println("error starting wire-pod server: " + err.Error())
 		os.Exit(1)
 	}
+
+	web.AddSecretsAPI()
+	web.AddSecretsWebroot()
+
+	go http.ListenAndServeTLS(":"+os.Getenv("WEB_PORT"), os.Getenv(vars.CertFileEnv), os.Getenv(vars.KeyFileEnv), nil)
+
 	fmt.Println("serving chipper at port " + chipperPort)
 	grpcServe(tlsListener, serv)
 }

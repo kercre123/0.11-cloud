@@ -18,8 +18,9 @@ function sendSerialInput() {
         },
         body: '{"esn":"' + esnInput + '"}'
     })
-        .then((response) => JSON.parse(response.text()))
-        .then((resp) => {
+        .then((response) => response.text())
+        .then((response) => {
+            var resp = JSON.parse(response)
             if (!resp["esn_isvalid"]) {
                 alert("This ESN is not valid.")
                 return
@@ -29,6 +30,6 @@ function sendSerialInput() {
     )
 }
 
-function goToPage(esn) {
+function goToSettingsPage(esn) {
     window.location.href = "./settings.html?serial=" + esn;
 }
