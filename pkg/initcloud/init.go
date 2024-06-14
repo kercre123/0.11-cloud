@@ -24,7 +24,7 @@ var GRPCServer *grpcserver.Server
 
 func MkHTTPS(port string) *http.Server {
 	srv := &http.Server{
-		Addr:    fmt.Sprintf(":%d", port),
+		Addr:    ":" + port,
 		Handler: http.DefaultServeMux,
 		TLSConfig: &tls.Config{
 			GetCertificate: func(*tls.ClientHelloInfo) (*tls.Certificate, error) {
@@ -71,8 +71,12 @@ func InitCloud() {
 
 	web.AddSecretsAPI()
 	web.AddSecretsWebroot()
-	go httpServ.ListenAndServeTLS("", "")
-
+	go func() {
+		err := httpServ.ListenAndServeTLS("", "")
+		if err != nil {
+			fmt.Println("error httping: " + err.Error())
+		}
+	}()
 	fmt.Println("serving chipper at port " + chipperPort)
 	grpcServe(Listener, serv)
 	for {
@@ -95,7 +99,12 @@ func InitCloud() {
 			})
 			httpServ.Shutdown(context.TODO())
 			httpServ = MkHTTPS(os.Getenv(vars.WebPortEnv))
-			go httpServ.ListenAndServeTLS("", "")
+			go func() {
+				err := httpServ.ListenAndServeTLS("", "")
+				if err != nil {
+					fmt.Println("error httping: " + err.Error())
+				}
+			}()
 			go grpcServe(Listener, serv)
 		}
 	}

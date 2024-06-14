@@ -1,8 +1,0 @@
--   easy way to give SSL cert
-    -   poll the file in case of new cert
--   we don't necessarily need to include a multiplexer. connchecks aren't implemented and aren't needed
--   be able to accept both OPUS and PCM requests
--   web interface for anyone to select location for weather and knowledgegraph settings
-    -   database???????
--   parameter handler for just this era of firmware
--   VAD which can handle the first few chunks being active (requests tend to include the "ding")

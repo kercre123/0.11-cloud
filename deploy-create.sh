@@ -131,8 +131,10 @@ if [[ ! -d opus ]]; then
     ./configure --host=${PODHOST} --prefix=$BPREFIX
     make -j8
     make install
-    cd ../../
+    cd ../../deploy
 fi
+
+cd ..
 
 echo "Creating server deployment tar..."
 

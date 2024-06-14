@@ -105,6 +105,8 @@ func apiHandler(w http.ResponseWriter, r *http.Request) {
 			http.Error(w, "Error unmarshaling JSON. Try again.", 500)
 			return
 		}
+		infoReq.KG.APIKey = strings.TrimSpace(infoReq.KG.APIKey)
+		infoReq.KG.ClientKey = strings.TrimSpace(infoReq.KG.ClientKey)
 		esnCheck := strings.ToLower(strings.TrimSpace(infoReq.ESN))
 		_, matches := vars.IsInWhitelist(remoteIP, esnCheck)
 		if !matches {
