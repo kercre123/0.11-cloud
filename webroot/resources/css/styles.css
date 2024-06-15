@@ -43,8 +43,10 @@ body {
 
 h1 {
     font-family: 'WeirdFont', sans-serif;
-    background: linear-gradient(to right, #bb86fc, #9a47ff);  -webkit-background-clip: text;
+    background: linear-gradient(to right, #bb86fc, #9a47ff);  
+    -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
+    background-clip: text;
     color: #bb86fc;
     margin-bottom: 10px;
     font-size: 3em;
