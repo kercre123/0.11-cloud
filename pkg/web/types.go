@@ -12,6 +12,10 @@ type ESNValidResponse struct {
 	MatchesIP bool `json:"matches_ip"`
 }
 
+type IsWhitelisted struct {
+	Whitelisted bool `json:"whitelisted"`
+}
+
 /*
 type Vector_UserInfo struct {
 	ESN      string        `json:"esn"`

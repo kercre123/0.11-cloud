@@ -5,10 +5,16 @@ import (
 	"fmt"
 	"io"
 	"net/http"
+	"path/filepath"
 	"strings"
 
 	"github.com/kercre123/0.11-cloud/pkg/vars"
 )
+
+func bringToError(w http.ResponseWriter, r *http.Request) {
+	// the only user-facing error is unauthorized
+	http.Redirect(w, r, "/errors/unauthorized.html", http.StatusTemporaryRedirect)
+}
 
 func getRemoteIP(r *http.Request) string {
 	xff := r.Header.Get("X-Forwarded-For")
@@ -30,7 +36,7 @@ func ipWhitelistMiddleware(next http.Handler) http.Handler {
 		remoteIP := getRemoteIP(r)
 		is, _ := vars.IsInWhitelist(remoteIP, "")
 		if !is {
-			http.Error(w, "Error 403. Your IP is not whitelisted. Try a voice command to whitelist your IP, then reload this page.", http.StatusForbidden)
+			bringToError(w, r)
 			return
 		}
 		next.ServeHTTP(w, r)
@@ -41,7 +47,14 @@ func apiHandler(w http.ResponseWriter, r *http.Request) {
 	remoteIP := getRemoteIP(r)
 	is, _ := vars.IsInWhitelist(remoteIP, "")
 	if !is {
-		http.Error(w, "Error 403. Your IP is not whitelisted. Try a voice command to whitelist your IP, then reload this page.", http.StatusForbidden)
+		if r.URL.Path == "/api/check_if_whitelisted" {
+			var wListO IsWhitelisted
+			wListO.Whitelisted = false
+			marshalledwList, _ := json.Marshal(wListO)
+			w.Write(marshalledwList)
+			return
+		}
+		http.Error(w, "403 unauthorized (likely not whitelisted)", http.StatusForbidden)
 		return
 	}
 	switch r.URL.Path {
@@ -116,11 +129,22 @@ func apiHandler(w http.ResponseWriter, r *http.Request) {
 		vars.ChangeUserInfo(infoReq)
 		w.WriteHeader(200)
 		fmt.Fprintf(w, "success")
+	case "/api/check_if_whitelisted":
+		var wListO IsWhitelisted
+		wListO.Whitelisted = true
+		marshalledwList, _ := json.Marshal(wListO)
+		w.Write(marshalledwList)
 	}
 }
 
 func AddSecretsWebroot() {
 	http.Handle("/", ipWhitelistMiddleware(http.FileServer(http.Dir(vars.SecretsWebroot))))
+
+	// errors need access to style files as well
+	http.Handle("/res/", http.StripPrefix("/res/", http.FileServer(http.Dir(filepath.Join(vars.SecretsWebroot, "resources")))))
+
+	// don't check IP for errors
+	http.Handle("/errors/", http.StripPrefix("/errors/", http.FileServer(http.Dir(filepath.Join(vars.SecretsWebroot, "errors")))))
 }
 
 func AddSecretsAPI() {

@@ -1,11 +1,11 @@
 @font-face {
     font-family: 'WeirdFont';
-    src: url('/fonts/h1Font.ttf') format('truetype');
+    src: url('/res/fonts/h1Font.ttf') format('truetype');
 }
 
 @font-face {
     font-family: 'VGAFont';
-    src: url('/fonts/bodyFont.woff') format('woff');
+    src: url('/res/fonts/bodyFont.woff') format('woff');
 }
 
 body {
@@ -21,6 +21,12 @@ body {
     flex-direction: column;
     text-align: center;
     overflow: hidden;
+}
+
+.wallOfText {
+    width: 500px;
+    max-width: 100%;
+    margin: 0 auto;
 }
 
 .form {
@@ -95,7 +101,8 @@ button {
 }
 
 button:hover {
-    background-position: 0 0;}
+    background-position: 0 0;
+}
 
 hr {
     border: 2px solid #3e3e3e;
