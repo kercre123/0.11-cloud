@@ -41,6 +41,9 @@ func MkHTTPS(port string) *http.Server {
 }
 
 func InitCloud() {
+	if vars.DisableWhiteList {
+		fmt.Println("WHITELIST IS DISABLED.")
+	}
 	chipperPort := os.Getenv(vars.ChipperPortEnv)
 	if chipperPort == "" {
 		fmt.Println("you must provide a chipper port (fulfill all env vars)")

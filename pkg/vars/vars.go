@@ -7,6 +7,8 @@ import (
 	"sync"
 )
 
+var DisableWhiteList bool = false
+
 const (
 	UserInfoFile    = "secrets/user-info.json"
 	IPWhitelistFile = "secrets/ip-whitelist.json"
@@ -134,6 +136,9 @@ func SaveUserInfo() error {
 }
 
 func SaveIPWhitelist() error {
+	if DisableWhiteList {
+		return nil
+	}
 	jsonBytes, err := json.Marshal(IPWhitelists)
 	if err != nil {
 		fmt.Println("error saving user info " + err.Error())
@@ -144,6 +149,9 @@ func SaveIPWhitelist() error {
 }
 
 func AddToIPWhitelist(ipAddr, esn string) {
+	if DisableWhiteList {
+		return
+	}
 	UserDataMutex.Lock()
 	defer UserDataMutex.Unlock()
 	for i, wl := range IPWhitelists {
@@ -164,6 +172,9 @@ func AddToIPWhitelist(ipAddr, esn string) {
 }
 
 func IsInWhitelist(ipAddr, esn string) (is, ESNmatches bool) {
+	if DisableWhiteList {
+		return true, true
+	}
 	UserDataMutex.Lock()
 	defer UserDataMutex.Unlock()
 	for _, wl := range IPWhitelists {

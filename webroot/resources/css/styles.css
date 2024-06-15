@@ -1,3 +1,4 @@
+/* Add viewport meta tag */
 @font-face {
     font-family: 'WeirdFont';
     src: url('/res/fonts/h1Font.ttf') format('truetype');
@@ -13,25 +14,25 @@ body {
     color: #ffffff;
     font-family: 'VGAFont', sans-serif;
     margin: 0;
-    padding: 20px;
+    padding: 10px 20px 20px;
     display: flex;
     justify-content: center;
     align-items: center;
-    height: 100vh;
+    min-height: 97vh;
     flex-direction: column;
     text-align: center;
     overflow: hidden;
 }
 
 .wallOfText {
-    width: 500px;
-    max-width: 100%;
+    width: 100%;
+    max-width: 600px;
     margin: 0 auto;
 }
 
 .form {
-    width: 500px;
-    max-width: 100%;
+    width: 100%;
+    max-width: 500px;
     margin: 0 auto;
 }
 
@@ -52,7 +53,7 @@ h1 {
     font-size: 3em;
 }
 
-label {
+label, p {
     font-size: 1.2em;
     margin-top: 10px;
     display: block;
@@ -69,10 +70,11 @@ input, select, button {
     text-align: center;
 }
 
-input[type="text"] {
+input[type="text"], select {
     background-color: #2d2d2d;
     color: #ffffff;
     font-family: 'VGAFont', sans-serif;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
 }
 
 .serialInput {
@@ -80,10 +82,7 @@ input[type="text"] {
 }
 
 select {
-    background-color: #2d2d2d;
-    color: #ffffff;
     width: 30%;
-    font-family: 'VGAFont', sans-serif;
 }
 
 button {
@@ -100,6 +99,7 @@ button {
     border-radius: 5px;
     padding: 10px;
     margin-bottom: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
 }
 
 button:hover {
@@ -108,15 +108,15 @@ button:hover {
 
 hr {
     border: 2px solid #3e3e3e;
-    width: 540px;
-    max-width: 100%;
+    width: 90%;
+    max-width: 540px;
     margin: 20px auto;
 }
 
 .small-hr {
     border: 1px solid #3e3e3e;
-    width: 270px;
-    max-width: 100%;
+    width: 90%;
+    max-width: 270px;
     margin: 20px auto;
 }
 
@@ -126,7 +126,8 @@ span {
 
 @media (max-width: 600px) {
     body {
-        padding: 10px;
+        padding: 0px 10px 40px;
+        min-height: 90vh;
     }
 
     input, select, button {
@@ -134,7 +135,35 @@ span {
         width: 100%;
     }
 
+    input[type="text"], select {
+        width: calc(100% - 20px);
+    }
+
+    .serialInput {
+        width: calc(60% - 20px);
+    }
+
+    select {
+        width: 30%;
+    }
+
+    .serialForm {
+        width: 500px;
+        max-width: 90%;
+        margin: 0 auto;
+    }
+
+    .wallOfText {
+        width: 90%;
+        max-width: 500px;
+        margin: 0 auto;
+    }
+
     hr, .small-hr {
         width: 100%;
+    }
+
+    h1 {
+        font-size: 2.5em;
     }
 }
