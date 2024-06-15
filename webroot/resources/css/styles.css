@@ -135,7 +135,7 @@ span {
         width: 100%;
     }
 
-    input[type="text"], select {
+    input, select {
         width: calc(100% - 20px);
     }
 
