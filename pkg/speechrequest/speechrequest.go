@@ -27,6 +27,8 @@ type SpeechRequest struct {
 	IsIG           bool
 	MicData        []byte
 	DecodedMicData []byte
+	// for PCM bots
+	EncodedMicData []byte
 	PrevLen        int
 	PrevLenRaw     int
 	InactiveFrames int
@@ -35,6 +37,8 @@ type SpeechRequest struct {
 	LastAudioChunk []byte
 	IsOpus         bool
 	OpusStream     *opus.OggStream
+	OpusStreamEnc  *opus.OggStream
+	EncBuf         []byte
 	ChunkSkips     int
 }
 
@@ -68,7 +72,7 @@ func (req *SpeechRequest) OpusDecode(chunk []byte) []byte {
 		}
 		return n
 	} else {
-		return req.MicData
+		return chunk
 	}
 }
 
@@ -182,6 +186,17 @@ func ReqToSpeechRequest(req interface{}) SpeechRequest {
 		request.PrevLen = len(request.DecodedMicData)
 		request.IsOpus = true
 	}
+	//  else {
+	// 	request.OpusStreamEnc = &opus.OggStream{
+	// 		SampleRate: 16000,
+	// 		Channels:   1,
+	// 	}
+	// 	encodedFirstReq, err := request.OpusStreamEnc.EncodeBytes(request.FirstReq)
+	// 	if err != nil {
+	// 		fmt.Println(err)
+	// 	}
+	// 	request.EncodedMicData = append(request.DecodedMicData, encodedFirstReq...)
+	// }
 	return request
 }
 
@@ -272,6 +287,19 @@ func (req *SpeechRequest) GetNextStreamChunkOpus() ([]byte, error) {
 			fmt.Println(chunkErr)
 			return nil, chunkErr
 		}
+		// for Houndify, we must re-encode to Opus
+		// if !req.IsOpus {
+		// 	req.MicData = append(req.MicData, chunk.InputAudio...)
+		// 	encoded, err := req.OpusStreamEnc.EncodeBytes(chunk.InputAudio)
+		// 	if err != nil {
+		// 		fmt.Println(err)
+		// 	}
+		// 	req.EncodedMicData = append(req.EncodedMicData, encoded...)
+		// 	req.LastAudioChunk = req.EncodedMicData[req.PrevLen:]
+		// 	req.PrevLen = len(req.EncodedMicData)
+		// 	req.PrevLenRaw = len(req.MicData)
+		// 	return req.LastAudioChunk, nil
+		// }
 		req.MicData = append(req.MicData, chunk.InputAudio...)
 		req.DecodedMicData = append(req.DecodedMicData, req.OpusDecode(chunk.InputAudio)...)
 		dataReturn := req.MicData[req.PrevLenRaw:]

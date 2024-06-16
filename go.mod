@@ -6,6 +6,8 @@ require (
 	github.com/digital-dream-labs/api v0.0.0-20210824232136-8cc90c1bb12c
 	github.com/digital-dream-labs/hugh v0.0.0-20210210154335-f4159b9fcd5f
 	github.com/digital-dream-labs/opus-go v0.0.0-20201230195736-934a8a9e0a1e
+	github.com/go-audio/audio v1.0.0
+	github.com/go-audio/wav v1.1.0
 	github.com/kercre123/vosk-api/go v1.0.2
 	github.com/kercre123/wire-pod/chipper v1.3.9
 	github.com/maxhawkins/go-webrtcvad v0.0.0-20210121163624-be60036f3083
@@ -20,6 +22,7 @@ require (
 	github.com/alecthomas/units v0.0.0-20151022065526-2efee857e7cf // indirect
 	github.com/dchest/jsmin v0.0.0-20220218165748-59f39799265f // indirect
 	github.com/fsnotify/fsnotify v1.4.9 // indirect
+	github.com/go-audio/riff v1.0.0 // indirect
 	github.com/golang/protobuf v1.5.4 // indirect
 	github.com/grd/ogg v0.0.0-20130623210630-0dae53159b70 // indirect
 	github.com/grpc-ecosystem/go-grpc-middleware v1.2.2 // indirect
