@@ -97,13 +97,12 @@ func ProcessTextAll(req interface{}, voiceText string, intents []vars.JsonIntent
 	var intentNum int = 0
 	var successMatched bool = false
 	voiceText = strings.ToLower(voiceText)
-	fmt.Println("Not a custom intent")
 	// Look for a perfect match first
 	for _, b := range intents {
 		for _, c := range b.Keyphrases {
 			if voiceText == strings.ToLower(c) {
 				fmt.Println("Bot " + botSerial + " Perfect match for intent " + b.Name + " (" + strings.ToLower(c) + ")")
-				prehistoricParamChecker(req, b.Name, voiceText, botSerial)
+				prehistoricParamChecker(req, b.Name, voiceText, botSerial, isOpus)
 				successMatched = true
 				matched = 1
 				break
@@ -123,7 +122,7 @@ func ProcessTextAll(req interface{}, voiceText string, intents []vars.JsonIntent
 			for _, c := range b.Keyphrases {
 				if strings.Contains(voiceText, strings.ToLower(c)) && !b.RequireExactMatch {
 					fmt.Println("Bot " + botSerial + " Partial match for intent " + b.Name + " (" + strings.ToLower(c) + ")")
-					prehistoricParamChecker(req, b.Name, voiceText, botSerial)
+					prehistoricParamChecker(req, b.Name, voiceText, botSerial, isOpus)
 					successMatched = true
 					matched = 1
 					break

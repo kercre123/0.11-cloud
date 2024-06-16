@@ -22,7 +22,7 @@ func (s *Server) ProcessIntent(req *vtt.IntentRequest) (*vtt.IntentResponse, err
 		ttr.IntentPass(req, "intent_system_noaudio", "error: "+err.Error(), map[string]string{}, false)
 		return nil, err
 	}
-	successMatched := ttr.ProcessTextAll(req, transcribedText, LoadedIntents, false)
+	successMatched := ttr.ProcessTextAll(req, transcribedText, LoadedIntents, sReq.IsOpus)
 	if !successMatched {
 		ttr.IntentPass(req, "intent_system_unmatched", transcribedText, map[string]string{}, false)
 		return nil, errors.New("intent did not match")

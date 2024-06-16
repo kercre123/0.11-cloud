@@ -8,7 +8,7 @@ import (
 	"github.com/kercre123/0.11-cloud/pkg/vars"
 )
 
-func prehistoricParamChecker(req interface{}, intent string, speechText string, botSerial string) {
+func prehistoricParamChecker(req interface{}, intent string, speechText string, botSerial string, isOpus bool) {
 	var intentParam string
 	var intentParamValue string
 	var newIntent string
@@ -90,7 +90,11 @@ func prehistoricParamChecker(req interface{}, intent string, speechText string, 
 		var username string
 		var nameSplitter string = ""
 		isParam = true
-		newIntent = "intent_names_username"
+		if !isOpus {
+			newIntent = "intent_names_username"
+		} else {
+			newIntent = "intent_names_username_extend"
+		}
 		if strings.Contains(speechText, lcztn.GetText(lcztn.STR_NAME_IS)) {
 			nameSplitter = lcztn.GetText(lcztn.STR_NAME_IS)
 		} else if strings.Contains(speechText, lcztn.GetText(lcztn.STR_NAME_IS2)) {
